@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 /* eslint-disable no-var */
+/* Prefer not to use var because of issue in block scope and functional scope*/
 
 "use strict";
 
-var WebServer = require("./webserver.js").WebServer;
-var path = require("path");
-var fs = require("fs");
-var os = require("os");
-var puppeteer = require("puppeteer");
-var url = require("url");
-var testUtils = require("./testutils.js");
+let WebServer = require("./webserver.js").WebServer;
+let path = require("path");
+let fs = require("fs");
+let os = require("os");
+let puppeteer = require("puppeteer");
+let url = require("url");
+let testUtils = require("./testutils.js");
 const dns = require("dns");
 const readline = require("readline");
 const yargs = require("yargs");
@@ -196,12 +197,13 @@ function parseOptions() {
     : [result.testfilter];
   return result;
 }
+/* Prefer not to use var because of issue in block scope and functional scope*/
 
-var refsTmpDir = "tmp";
-var testResultDir = "test_snapshots";
-var refsDir = "ref";
-var eqLog = "eq.log";
-var browserTimeout = 120;
+let refsTmpDir = "tmp";
+let testResultDir = "test_snapshots";
+let refsDir = "ref";
+let eqLog = "eq.log";
+let browserTimeout = 120;
 
 function monitorBrowserTimeout(session, onTimeout) {
   if (session.timeoutMonitor) {
@@ -256,21 +258,22 @@ function examineRefImages() {
     });
   });
 }
+/* Prefer not to use var because of issue in block scope and functional scope*/
 
 function startRefTest(masterMode, showRefImages) {
   function finalize() {
     stopServer();
-    var numErrors = 0;
-    var numFBFFailures = 0;
-    var numEqFailures = 0;
-    var numEqNoSnapshot = 0;
+    let numErrors = 0;
+    let numFBFFailures = 0;
+    let numEqFailures = 0;
+    let numEqNoSnapshot = 0;
     sessions.forEach(function (session) {
       numErrors += session.numErrors;
       numFBFFailures += session.numFBFFailures;
       numEqFailures += session.numEqFailures;
       numEqNoSnapshot += session.numEqNoSnapshot;
     });
-    var numFatalFailures = numErrors + numFBFFailures;
+    let numFatalFailures = numErrors + numFBFFailures;
     console.log();
     if (numFatalFailures + numEqFailures > 0) {
       console.log("OHNOES!  Some tests failed!");
@@ -379,8 +382,10 @@ function startRefTest(masterMode, showRefImages) {
     }
   }
 
-  var startTime;
-  var manifest = getTestManifest();
+  /* Prefer not to use var because of issue in block scope and functional scope*/
+  
+  let startTime;
+  let manifest = getTestManifest();
   if (!manifest) {
     return;
   }
@@ -433,20 +438,22 @@ function getTestManifest() {
   return manifest;
 }
 
+/* Prefer not to use var because of issue in block scope and functional scope*/
+
 function checkEq(task, results, browser, masterMode) {
-  var taskId = task.id;
-  var refSnapshotDir = path.join(refsDir, os.platform(), browser, taskId);
-  var testSnapshotDir = path.join(
+  let taskId = task.id;
+  let refSnapshotDir = path.join(refsDir, os.platform(), browser, taskId);
+  let testSnapshotDir = path.join(
     testResultDir,
     os.platform(),
     browser,
     taskId
   );
 
-  var pageResults = results[0];
-  var taskType = task.type;
-  var numEqNoSnapshot = 0;
-  var numEqFailures = 0;
+  let pageResults = results[0];
+  let taskType = task.type;
+  let numEqNoSnapshot = 0;
+  let numEqFailures = 0;
   for (var page = 0; page < pageResults.length; page++) {
     if (!pageResults[page]) {
       continue;
@@ -459,9 +466,9 @@ function checkEq(task, results, browser, masterMode) {
       console.error("Valid snapshot was not found.");
     }
 
-    var refSnapshot = null;
-    var eq = false;
-    var refPath = path.join(refSnapshotDir, page + 1 + ".png");
+    let refSnapshot = null;
+    let eq = false;
+    let refPath = path.join(refSnapshotDir, page + 1 + ".png");
     if (!fs.existsSync(refPath)) {
       numEqNoSnapshot++;
       if (!masterMode) {
@@ -514,8 +521,10 @@ function checkEq(task, results, browser, masterMode) {
         numEqFailures++;
       }
     }
+    /* Prefer not to use var because of issue in block scope and functional scope*/
+   
     if (masterMode && (!refSnapshot || !eq)) {
-      var tmpSnapshotDir = path.join(
+      let tmpSnapshotDir = path.join(
         refsTmpDir,
         os.platform(),
         browser,
@@ -529,7 +538,7 @@ function checkEq(task, results, browser, masterMode) {
     }
   }
 
-  var session = getSession(browser);
+  let  session = getSession(browser);
   session.numEqNoSnapshot += numEqNoSnapshot;
   if (numEqFailures > 0) {
     session.numEqFailures += numEqFailures;
@@ -541,15 +550,15 @@ function checkEq(task, results, browser, masterMode) {
 }
 
 function checkFBF(task, results, browser, masterMode) {
-  var numFBFFailures = 0;
-  var round0 = results[0],
+  let numFBFFailures = 0;
+  let round0 = results[0],
     round1 = results[1];
   if (round0.length !== round1.length) {
     console.error("round 1 and 2 sizes are different");
   }
 
   for (var page = 0; page < round1.length; page++) {
-    var r0Page = round0[page],
+    let  r0Page = round0[page],
       r1Page = round1[page];
     if (!r0Page) {
       continue;
@@ -603,9 +612,9 @@ function checkLoad(task, results, browser) {
 }
 
 function checkRefTestResults(browser, id, results) {
-  var failed = false;
-  var session = getSession(browser);
-  var task = session.tasks[id];
+  let failed = false;
+  let session = getSession(browser);
+  let task = session.tasks[id];
   results.forEach(function (roundResults, round) {
     roundResults.forEach(function (pageResult, page) {
       if (!pageResult) {
@@ -669,9 +678,11 @@ function checkRefTestResults(browser, id, results) {
   });
 }
 
+/* Prefer not to use var because of issue in block scope and functional scope*/
+
 function refTestPostHandler(req, res) {
-  var parsedUrl = url.parse(req.url, true);
-  var pathname = parsedUrl.pathname;
+  let parsedUrl = url.parse(req.url, true);
+  let pathname = parsedUrl.pathname;
   if (
     pathname !== "/tellMeToQuit" &&
     pathname !== "/info" &&
@@ -680,7 +691,7 @@ function refTestPostHandler(req, res) {
     return false;
   }
 
-  var body = "";
+  let body = "";
   req.on("data", function (data) {
     body += data;
   });
@@ -688,7 +699,7 @@ function refTestPostHandler(req, res) {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end();
 
-    var session;
+    let session;
     if (pathname === "/tellMeToQuit") {
       session = getSession(parsedUrl.query.browser);
       monitorBrowserTimeout(session, null);
@@ -696,24 +707,25 @@ function refTestPostHandler(req, res) {
       return;
     }
 
-    var data = JSON.parse(body);
+    let data = JSON.parse(body);
     if (pathname === "/info") {
       console.log(data.message);
       return;
     }
-
-    var browser = data.browser;
-    var round = data.round;
-    var id = data.id;
-    var page = data.page - 1;
-    var failure = data.failure;
-    var snapshot = data.snapshot;
-    var lastPageNum = data.lastPageNum;
+/* Prefer not to use var because of issue in block scope and functional scope*/
+    
+    let browser = data.browser;
+    let round = data.round;
+    let id = data.id;
+    let page = data.page - 1;
+    let failure = data.failure;
+    let snapshot = data.snapshot;
+    let lastPageNum = data.lastPageNum;
 
     session = getSession(browser);
     monitorBrowserTimeout(session, handleSessionTimeout);
 
-    var taskResults = session.taskResults[id];
+    let taskResults = session.taskResults[id];
     if (!taskResults[round]) {
       taskResults[round] = [];
     }
@@ -750,7 +762,7 @@ function refTestPostHandler(req, res) {
       });
     }
 
-    var isDone = taskResults.at(-1) && taskResults.at(-1)[lastPageNum - 1];
+    let isDone = taskResults.at(-1) && taskResults.at(-1)[lastPageNum - 1];
     if (isDone) {
       checkRefTestResults(browser, id, taskResults);
       session.remaining--;
@@ -763,7 +775,7 @@ function onAllSessionsClosedAfterTests(name) {
   const startTime = Date.now();
   return function () {
     stopServer();
-    var numRuns = 0,
+    let numRuns = 0,
       numErrors = 0;
     sessions.forEach(function (session) {
       numRuns += session.numRuns;
@@ -777,7 +789,7 @@ function onAllSessionsClosedAfterTests(name) {
     } else {
       console.log("All " + name + " tests passed.");
     }
-    var runtime = (Date.now() - startTime) / 1000;
+    let  runtime = (Date.now() - startTime) / 1000;
     console.log(name + " tests runtime was " + runtime.toFixed(1) + " seconds");
   };
 }
@@ -827,8 +839,8 @@ async function startIntegrationTest() {
 }
 
 function unitTestPostHandler(req, res) {
-  var parsedUrl = url.parse(req.url);
-  var pathname = parsedUrl.pathname;
+  let parsedUrl = url.parse(req.url);
+  let pathname = parsedUrl.pathname;
   if (
     pathname !== "/tellMeToQuit" &&
     pathname !== "/info" &&
@@ -838,16 +850,16 @@ function unitTestPostHandler(req, res) {
     return false;
   }
 
-  var body = "";
+  let body = "";
   req.on("data", function (data) {
     body += data;
   });
   req.on("end", function () {
     if (pathname === "/ttx") {
-      var translateFont = require("./font/ttxdriver.js").translateFont;
-      var onCancel = null,
+      let translateFont = require("./font/ttxdriver.js").translateFont;
+      let onCancel = null,
         ttxTimeout = 10000;
-      var timeoutId = setTimeout(function () {
+      let timeoutId = setTimeout(function () {
         onCancel?.("TTX timeout");
       }, ttxTimeout);
       translateFont(
@@ -867,7 +879,7 @@ function unitTestPostHandler(req, res) {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end();
 
-    var data = JSON.parse(body);
+    let data = JSON.parse(body);
     if (pathname === "/tellMeToQuit") {
       closeSession(data.browser);
       return;
@@ -876,9 +888,9 @@ function unitTestPostHandler(req, res) {
       console.log(data.message);
       return;
     }
-    var session = getSession(data.browser);
+    let session = getSession(data.browser);
     session.numRuns++;
-    var message =
+    let message =
       data.status + " | " + data.description + " | in " + session.name;
     if (data.status === "TEST-UNEXPECTED-FAIL") {
       session.numErrors++;
@@ -1030,8 +1042,8 @@ async function closeSession(browser) {
 }
 
 function ensurePDFsDownloaded(callback) {
-  var downloadUtils = require("./downloadutils.js");
-  var manifest = getTestManifest();
+  let downloadUtils = require("./downloadutils.js");
+  let manifest = getTestManifest();
   downloadUtils.downloadManifestFiles(manifest, function () {
     downloadUtils.verifyManifestFiles(manifest, function (hasErrors) {
       if (hasErrors) {
@@ -1076,12 +1088,14 @@ function main() {
   }
 }
 
-var server;
-var sessions;
-var onAllSessionsClosed;
-var host = "127.0.0.1";
-var options = parseOptions();
-var stats;
-var tempDir = null;
+/* Prefer not to use var because of issue in block scope and functional scope*/
+
+let server;
+let sessions;
+let onAllSessionsClosed;
+let host = "127.0.0.1";
+let options = parseOptions();
+let stats;
+let tempDir = null;
 
 main();
