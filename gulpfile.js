@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 /* eslint-env node */
+/* Prefer not to use var because of issue in block scope and functional scope*/
 
 "use strict";
 
