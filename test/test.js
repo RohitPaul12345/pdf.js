@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 /* eslint-disable no-var */
+
 /* Prefer not to use var because of issue in block scope and functional scope*/
 
 "use strict";
