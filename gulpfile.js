@@ -146,11 +146,11 @@ function safeSpawnSync(command, parameters, options) {
 }
 
 function startNode(args, options) {
-  // Node.js decreased the maximum header size from 80 KB to 8 KB in newer
-  // releases, which is not sufficient for some of our reference test files
-  // (such as `issue6360.pdf`), so we need to restore this value. Note that
-  // this argument needs to be before all other arguments as it needs to be
-  // passed to the Node.js process itself and not to the script that it runs.
+  /* Node.js decreased the maximum header size from 80 KB to 8 KB in newer
+   releases, which is not sufficient for some of our reference test files
+   (such as `issue6360.pdf`), so we need to restore this value. Note that
+   this argument needs to be before all other arguments as it needs to be
+   passed to the Node.js process itself and not to the script that it runs.*/
   args.unshift("--max-http-header-size=80000");
   return spawn("node", args, options);
 }
